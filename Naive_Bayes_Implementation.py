@@ -179,5 +179,5 @@ def classify(tweet):
     return tweet_prediction
 
 
-print(f'Performance of Naive Bayes implementation on Validation data: {validate(validation_data)}')
-print(f"Prediction based on user input: {classify('Short story: I was in Amsterdam & I was gifted this doll by a very sweet woman')}")
+#print(f'Performance of Naive Bayes implementation on Validation data: {validate(validation_data)}')
+#print("Prediction based on user input: " + classify('Sometimes I poop, sometimes i don\'t, it just depends on the day'))

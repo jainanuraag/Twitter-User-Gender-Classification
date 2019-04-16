@@ -1,13 +1,15 @@
 import tkinter as tk
+import Naive_Bayes_Implementation as nbi
 
 HEIGHT = 400
 WIDTH = 400
 
+
 # function being called by button
-# to be used by bayes classifier to try to classify entry text
-# and change the label text to the classification
+# to be used by bayes classifier to classify entry text
 def button_press(entry):
-    ans['text'] = "Your input is: " + entry
+    ans['text'] = nbi.classify(entry)
+
 
 # main window frame
 root = tk.Tk()
@@ -29,12 +31,12 @@ entry = tk.Entry(frame)
 entry.place(relwidth=0.68, relheight=1)
 
 # Button to submit tweet
-button = tk.Button(frame, text="Submit tweet", fg='#0084b4', command= lambda: button_press(entry.get()))
-button.place(relx=0.7, relheight=1, relwidth=0.3)
+button = tk.Button(frame, text="Submit tweet", fg='#0084b4', command=lambda: button_press(entry.get()))
+button.place(relx=.7, relheight=1, relwidth=.3)
 
 # Background frame for answer/analysis of user input
 answer_frame = tk.Frame(root, bg='#0084b4', bd=7)
-answer_frame.place(relx=0.5, rely=0.38, relwidth = 0.5, relheight=0.25, anchor='n')
+answer_frame.place(relx=.5, rely=.38, relwidth=.5, relheight=.25, anchor='n')
 
 # Text for answer/analysis of user input, will change after button press
 # #c0deed
