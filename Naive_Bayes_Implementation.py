@@ -1,6 +1,10 @@
 import pandas as pd
 import random
 import re
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.preprocessing import LabelEncoder
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import accuracy_score
 
 # Data guidelines according to Canvas
 train_data_size = .6
@@ -110,7 +114,7 @@ male_denominator = male_distinct_n + vocabulary_len
 female_denominator = female_distinct_n + vocabulary_len
 
 # Calculate accuracy on Validation data
-def validate(validation_data):
+def validate():
     prediction = []  # stores predicted values
     correct = []  # boolean list determine whether prediction was correct
     # Check all validation data
@@ -178,6 +182,18 @@ def classify(tweet):
     tweet_prediction = 'Male' if male_prob > female_prob else 'Female'
     return tweet_prediction
 
+# Sklearn Multinomial Naive Bayes Implementation
+# Returns accuracy score when using sklearn's Multinomial Naive Bayes' classifier on validation data
+# Code adapted from https://github.com/rasto2211/Twitter-User-Gender-Classification/blob/master/notebooks/exploration.ipynb
+def sklearn_MNB():
+    vectorizer = CountVectorizer()
+    vectorizer = vectorizer.fit(train_data["edited_text"])
+    x_train = vectorizer.transform(train_data["edited_text"])  # training data x values
+    encoder = LabelEncoder()
+    y_train = encoder.fit_transform(train_data["gender"])  # training data y values
+    x_val = vectorizer.transform(validation_data["edited_text"])
+    y_val = encoder.transform(validation_data["gender"])
 
-#print(f'Performance of Naive Bayes implementation on Validation data: {validate(validation_data)}')
-#print("Prediction based on user input: " + classify('Sometimes I poop, sometimes i don\'t, it just depends on the day'))
+    mnb = MultinomialNB()  # create classifier object
+    mnb = mnb.fit(x_train, y_train)  # fit data to classifier
+    return accuracy_score(y_val, mnb.predict(x_val))
