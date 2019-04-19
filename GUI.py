@@ -10,6 +10,12 @@ WIDTH = 400
 def button_press(entry):
     ans['text'] = nbi.classify(entry)
 
+def button1_press(entry):
+    sklearn_ans['text'] = "The sklearn's multinomialNB's prediction: " + nbi.sklearn_MNB_predict(entry)
+
+def button2_press():
+    accuracy_label['text'] = nbi.validate()
+
 
 # main window frame
 root = tk.Tk()
@@ -32,7 +38,15 @@ entry.place(relwidth=0.68, relheight=1)
 
 # Button to submit tweet
 button = tk.Button(frame, text="Submit tweet", fg='#0084b4', command=lambda: button_press(entry.get()))
-button.place(relx=.7, relheight=1, relwidth=.3)
+button.place(relx=.5, relheight=1, relwidth=.12)
+
+# Button to show sklearn's prediction.
+button1 = tk.Button(frame, text="Show sklearn prediction", command=lambda: button1_press(entry.get()))
+button1.place(relx=.63, relheight=1, relwidth=.2)
+
+# Button to show our implementation's accuracy.
+button2 = tk.Button(frame, text="Show our implementation's accuracy", command=lambda: button2_press())
+button2.place(relx=.85, relheight=1, relwidth=.2)
 
 # Background frame for answer/analysis of user input
 answer_frame = tk.Frame(root, bg='#0084b4', bd=7)
@@ -41,6 +55,15 @@ answer_frame.place(relx=.5, rely=.38, relwidth=.5, relheight=.25, anchor='n')
 # Text for answer/analysis of user input, will change after button press
 # #c0deed
 ans = tk.Label(answer_frame, bg='#c0deed')
-ans.place(relheight=1, relwidth=1)
+ans.place(relx=.1, relheight=1, relwidth=.3)
+
+# Text for showing prediction using other Native Bayes implementation, for example the sklearn package built-in
+# MultibinomialNB.
+sklearn_ans = tk.Label(answer_frame, bg='#c0deed')
+sklearn_ans.place(relx=.4, relheight=1, relwidth=.3)
+
+# Text for showing the accuracy of our implementation of Native Bayes Model.
+accuracy_label = tk.Label(answer_frame, bg='#c0deed')
+accuracy_label.place(relx=.7, relheight=1, relwidth=.3)
 
 root.mainloop()

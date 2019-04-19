@@ -197,3 +197,15 @@ def sklearn_MNB():
     mnb = MultinomialNB()  # create classifier object
     mnb = mnb.fit(x_train, y_train)  # fit data to classifier
     return accuracy_score(y_val, mnb.predict(x_val))
+
+def sklearn_MNB_predict(entry):
+    vectorizer = CountVectorizer()
+    vectorizer = vectorizer.fit(train_data["edited_text"])
+    x_train = vectorizer.transform(train_data["edited_text"])  # training data x values
+    encoder = LabelEncoder()
+    y_train = encoder.fit_transform(train_data["gender"])  # training data y values
+
+    mnb = MultinomialNB()  # create classifier object
+    mnb.fit(x_train, y_train)  # fit data to classifier
+    print(mnb.predict(entry))
+    return mnb.predict(entry).array.reshape(-1, 1)
