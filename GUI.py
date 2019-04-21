@@ -11,7 +11,7 @@ def button_press(entry):
     ans['text'] = nbi.classify(entry)
 
 def button1_press(entry):
-    sklearn_ans['text'] = "The sklearn's multinomialNB's prediction: " + nbi.sklearn_MNB_predict(entry)
+    sklearn_ans['text'] = nbi.sklearn_MNB_predict(entry)
 
 def button2_press():
     accuracy_label['text'] = nbi.validate()

@@ -1,10 +1,12 @@
 import pandas as pd
 import random
 import re
+import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.preprocessing import LabelEncoder
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score
+from sklearn.feature_extraction.text import TfidfTransformer
 
 # Data guidelines according to Canvas
 train_data_size = .6
@@ -155,6 +157,7 @@ def validate():
 
 # Classify a user's tweet
 def classify(tweet):
+    # Clean user tweet
     edited_text = normalize_text(tweet)
     words_in_tweet = set(edited_text.split())
     edited_text = list(filter(lambda word: word not in stop_words, words_in_tweet))
@@ -198,14 +201,25 @@ def sklearn_MNB():
     mnb = mnb.fit(x_train, y_train)  # fit data to classifier
     return accuracy_score(y_val, mnb.predict(x_val))
 
-def sklearn_MNB_predict(entry):
+
+# Code adapted from https://github.com/rasto2211/Twitter-User-Gender-Classification/blob/master/notebooks/exploration.ipynb
+# Used https://towardsdatascience.com/multi-class-text-classification-with-sklearn-and-nltk-in-python-a-software-engineering-use-case-779d4a28ba5
+def sklearn_MNB_predict(tweet):
+    # Clean user tweet, make into pandas series for CountVectorizer transform
+    edited_text = normalize_text(tweet)
+    words_in_tweet = set(edited_text.split())
+    edited_text = pd.Series([" ".join(list(filter(lambda word: word not in stop_words, words_in_tweet)))])
+
     vectorizer = CountVectorizer()
     vectorizer = vectorizer.fit(train_data["edited_text"])
     x_train = vectorizer.transform(train_data["edited_text"])  # training data x values
     encoder = LabelEncoder()
     y_train = encoder.fit_transform(train_data["gender"])  # training data y values
 
+    edited_text = vectorizer.transform(edited_text)
+
     mnb = MultinomialNB()  # create classifier object
     mnb.fit(x_train, y_train)  # fit data to classifier
-    print(mnb.predict(entry))
-    return mnb.predict(entry).array.reshape(-1, 1)
+
+    prediction = 'Male' if [1] == mnb.predict(edited_text) else 'Female'
+    return prediction
