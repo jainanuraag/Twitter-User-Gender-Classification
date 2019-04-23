@@ -10,8 +10,10 @@ WIDTH = 400
 def button_press(entry):
     ans['text'] = nbi.classify(entry)
 
+
 def button1_press(entry):
     sklearn_ans['text'] = nbi.sklearn_MNB_predict(entry)
+
 
 def button2_press():
     accuracy_label['text'] = nbi.validate()
@@ -45,7 +47,7 @@ button1 = tk.Button(frame, text="Show sklearn prediction", command=lambda: butto
 button1.place(relx=.63, relheight=1, relwidth=.2)
 
 # Button to show our implementation's accuracy.
-button2 = tk.Button(frame, text="Show our implementation's accuracy", command=lambda: button2_press())
+button2 = tk.Button(frame, text="Validation Data Accuracy", command=lambda: button2_press())
 button2.place(relx=.85, relheight=1, relwidth=.2)
 
 # Background frame for answer/analysis of user input

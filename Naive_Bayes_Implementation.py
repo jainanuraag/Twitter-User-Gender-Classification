@@ -6,7 +6,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.preprocessing import LabelEncoder
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score
-from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.linear_model import LogisticRegression
 
 # Data guidelines according to Canvas
 train_data_size = .6
@@ -153,7 +153,7 @@ def validate():
         # Determine if prediction is correct
         correct.append(tweet_prediction == true_gender)
 
-    return sum(correct) / len(correct)
+    return round(sum(correct) / len(correct), 3)
 
 # Classify a user's tweet
 def classify(tweet):
@@ -202,13 +202,19 @@ def sklearn_MNB():
     return accuracy_score(y_val, mnb.predict(x_val))
 
 
+# Utility function to clean text, remove duplicate words, and remove stop words.
+# Returns a pandas Series
+def clean_text(tweet):
+    edited_text = normalize_text(tweet)
+    words_in_tweet = set(edited_text.split())
+    return pd.Series([" ".join(list(filter(lambda word: word not in stop_words, words_in_tweet)))])
+
+
 # Code adapted from https://github.com/rasto2211/Twitter-User-Gender-Classification/blob/master/notebooks/exploration.ipynb
 # Used https://towardsdatascience.com/multi-class-text-classification-with-sklearn-and-nltk-in-python-a-software-engineering-use-case-779d4a28ba5
 def sklearn_MNB_predict(tweet):
     # Clean user tweet, make into pandas series for CountVectorizer transform
-    edited_text = normalize_text(tweet)
-    words_in_tweet = set(edited_text.split())
-    edited_text = pd.Series([" ".join(list(filter(lambda word: word not in stop_words, words_in_tweet)))])
+    edited_text = clean_text(tweet)
 
     vectorizer = CountVectorizer()
     vectorizer = vectorizer.fit(train_data["edited_text"])
@@ -223,3 +229,24 @@ def sklearn_MNB_predict(tweet):
 
     prediction = 'Male' if [1] == mnb.predict(edited_text) else 'Female'
     return prediction
+
+
+def sklearn_logistic():
+    vectorizer = CountVectorizer()
+    vectorizer = vectorizer.fit(train_data["edited_text"])
+    x_train = vectorizer.transform(train_data["edited_text"])  # training data x values
+    x_val = vectorizer.transform(validation_data["edited_text"])
+    encoder = LabelEncoder()
+    y_train = encoder.fit_transform(train_data["gender"])  # training data y values
+    y_val = encoder.transform(validation_data["gender"])
+
+    logistic = LogisticRegression(C=1.0, penalty='l1', tol=1.0e-10)
+    logistic = logistic.fit(x_train, y_train)
+
+    return accuracy_score(y_val, logistic.predict(x_val))
+
+print(sklearn_MNB())
+print(validate())
+print(sklearn_MNB_predict('Features from text'))
+print(classify('Features from text'))
+print(sklearn_logistic())
