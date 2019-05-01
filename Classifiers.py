@@ -292,9 +292,10 @@ def sklearn_random_forest():
 
 
 # Output predictions
-sample_tweet = "I am the ultimate male. I am experienced in gorilla warfare"
-print(f"Our MNB prediction: {classify(sample_tweet)}")
-print(f"Sklearn MNB prediction: {sklearn_MNB_predict(sample_tweet)}")
+# Uncomment lines to print Multinomial Naive Bayes predictions
+# sample_tweet = "I am the ultimate male. I am experienced in gorilla warfare"
+# print(f"Our MNB prediction: {classify(sample_tweet)}")
+# print(f"Sklearn MNB prediction: {sklearn_MNB_predict(sample_tweet)}")
 
 # Accuracy_scores holds validation scores from different models
 accuracy_scores = {
@@ -305,6 +306,7 @@ accuracy_scores = {
     "Support Vector Classifier validation score": sklearn_svc_validate()
 }
 
-# Output accuracy scores
-for key, value in accuracy_scores.items():
-    print(f'{key}: {value}')
+# Outputs accuracy scores
+# Uncomment these lines to print accuracy scores
+# for key, value in accuracy_scores.items():
+#     print(f'{key}: {value}')
