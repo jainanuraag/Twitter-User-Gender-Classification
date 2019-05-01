@@ -1,5 +1,5 @@
 import tkinter as tk
-import Naive_Bayes_Implementation as nbi
+import Classifiers as cl
 
 HEIGHT = 400
 WIDTH = 400
@@ -8,15 +8,15 @@ WIDTH = 400
 # function being called by button
 # to be used by bayes classifier to classify entry text
 def button_press(entry):
-    ans['text'] = nbi.classify(entry)
+    ans['text'] = cl.classify(entry)
 
 
 def button1_press(entry):
-    sklearn_ans['text'] = nbi.sklearn_MNB_predict(entry)
+    sklearn_ans['text'] = cl.sklearn_MNB_predict(entry)
 
 
 def button2_press():
-    accuracy_label['text'] = nbi.validate()
+    accuracy_label['text'] = cl.validate()
 
 
 # main window frame

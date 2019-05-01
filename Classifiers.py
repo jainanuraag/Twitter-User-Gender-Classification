@@ -1,12 +1,13 @@
 import pandas as pd
 import random
 import re
-import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.preprocessing import LabelEncoder
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score
 from sklearn.linear_model import LogisticRegression
+from sklearn.svm import LinearSVC
+from sklearn.ensemble import RandomForestClassifier
 
 # Data guidelines according to Canvas
 train_data_size = .6
@@ -32,6 +33,7 @@ stop_words = {
 'was', 'here', 'than', 'by'
 }
 
+
 # Utility function taken and adapted from:
 # https://github.com/rasto2211/Twitter-User-Gender-Classification/blob/master/notebooks/exploration.ipynb
 # Normalizes text for analysis by removing URLs, special characters, and double spaces
@@ -46,6 +48,7 @@ def normalize_text(text):
     text = re.sub('\s+', ' ', text)
     # Make text lowercase
     return text.lower()
+
 
 # Extract data
 df = pd.read_csv("gender-classifier-DFE-791531.csv", encoding='latin1')
@@ -115,6 +118,7 @@ female_distinct_n = len(set(female_text))
 male_denominator = male_distinct_n + vocabulary_len
 female_denominator = female_distinct_n + vocabulary_len
 
+
 # Calculate accuracy on Validation data
 def validate():
     prediction = []  # stores predicted values
@@ -155,6 +159,7 @@ def validate():
 
     return round(sum(correct) / len(correct), 3)
 
+
 # Classify a user's tweet
 def classify(tweet):
     # Clean user tweet
@@ -185,10 +190,11 @@ def classify(tweet):
     tweet_prediction = 'Male' if male_prob > female_prob else 'Female'
     return tweet_prediction
 
+
 # Sklearn Multinomial Naive Bayes Implementation
 # Returns accuracy score when using sklearn's Multinomial Naive Bayes' classifier on validation data
 # Code adapted from https://github.com/rasto2211/Twitter-User-Gender-Classification/blob/master/notebooks/exploration.ipynb
-def sklearn_MNB():
+def sklearn_MNB_validate():
     vectorizer = CountVectorizer()
     vectorizer = vectorizer.fit(train_data["edited_text"])
     x_train = vectorizer.transform(train_data["edited_text"])  # training data x values
@@ -231,7 +237,7 @@ def sklearn_MNB_predict(tweet):
     return prediction
 
 
-def sklearn_logistic():
+def sklearn_logistic_validate():
     vectorizer = CountVectorizer()
     vectorizer = vectorizer.fit(train_data["edited_text"])
     x_train = vectorizer.transform(train_data["edited_text"])  # training data x values
@@ -242,11 +248,43 @@ def sklearn_logistic():
 
     logistic = LogisticRegression(C=1.0, penalty='l1', tol=1.0e-10)
     logistic = logistic.fit(x_train, y_train)
-
     return accuracy_score(y_val, logistic.predict(x_val))
 
-print(sklearn_MNB())
+
+def sklearn_svc_validate():
+    vectorizer = CountVectorizer()
+    vectorizer = vectorizer.fit(train_data["edited_text"])
+    x_train = vectorizer.transform(train_data["edited_text"])  # training data x values
+    x_val = vectorizer.transform(validation_data["edited_text"])
+    encoder = LabelEncoder()
+    y_train = encoder.fit_transform(train_data["gender"])  # training data y values
+    y_val = encoder.transform(validation_data["gender"])
+
+    support_vector = LinearSVC()
+    support_vector.fit(x_train, y_train)
+    return accuracy_score(y_val, support_vector.predict(x_val))
+
+
+def sklearn_random_forest():
+    vectorizer = CountVectorizer()
+    vectorizer = vectorizer.fit(train_data["edited_text"])
+    x_train = vectorizer.transform(train_data["edited_text"])  # training data x values
+    x_val = vectorizer.transform(validation_data["edited_text"])
+    encoder = LabelEncoder()
+    y_train = encoder.fit_transform(train_data["gender"])  # training data y values
+    y_val = encoder.transform(validation_data["gender"])
+
+    rand_forest = RandomForestClassifier(n_estimators=200, max_depth=3, random_state=0)
+    rand_forest.fit(x_train, y_train)
+    return accuracy_score(y_val, rand_forest.predict(x_val))
+
+
+
+
+print(sklearn_MNB_validate())
 print(validate())
 print(sklearn_MNB_predict('Features from text'))
 print(classify('Features from text'))
-print(sklearn_logistic())
+print(sklearn_logistic_validate())
+print(sklearn_svc_validate())
+print(sklearn_random_forest())
