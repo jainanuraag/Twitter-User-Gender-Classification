@@ -8,6 +8,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import LinearSVC
 from sklearn.ensemble import RandomForestClassifier
+from collections import Counter
 
 # Data guidelines according to Canvas
 train_data_size = .6
@@ -119,10 +120,9 @@ male_denominator = male_distinct_n + vocabulary_len
 female_denominator = female_distinct_n + vocabulary_len
 
 
-# Calculate accuracy on Validation data
+# Calculate accuracy on validation data using MultinomialNaiveBayes implementation
 def validate():
-    prediction = []  # stores predicted values
-    correct = []  # boolean list determine whether prediction was correct
+    correct = []  # boolean list storing whether prediction was correct
     # Check all validation data
     for index, row in validation_data.iterrows():
         tweet = row['text']
@@ -152,15 +152,13 @@ def validate():
 
         # Add prediction for tweet based on max probability
         tweet_prediction = 'male' if male_prob > female_prob else 'female'
-        prediction.append(tweet_prediction)
-
         # Determine if prediction is correct
         correct.append(tweet_prediction == true_gender)
 
     return round(sum(correct) / len(correct), 3)
 
 
-# Classify a user's tweet
+# Classify a user's tweet using our MultinomialNaiveBayes implementation
 def classify(tweet):
     # Clean user tweet
     edited_text = normalize_text(tweet)
@@ -191,13 +189,14 @@ def classify(tweet):
     return tweet_prediction
 
 
-# Sklearn Multinomial Naive Bayes Implementation
-# Returns accuracy score when using sklearn's Multinomial Naive Bayes' classifier on validation data
+# Uses sklearn's MultinomialNaiveBayes to return accuracy score on validation data
 # Code adapted from https://github.com/rasto2211/Twitter-User-Gender-Classification/blob/master/notebooks/exploration.ipynb
 def sklearn_MNB_validate():
+    # Count Vectorizer vectorizes x values in training an validation data
     vectorizer = CountVectorizer()
     vectorizer = vectorizer.fit(train_data["edited_text"])
     x_train = vectorizer.transform(train_data["edited_text"])  # training data x values
+    # Encoder encodes genders into binary digits
     encoder = LabelEncoder()
     y_train = encoder.fit_transform(train_data["gender"])  # training data y values
     x_val = vectorizer.transform(validation_data["edited_text"])
@@ -208,7 +207,7 @@ def sklearn_MNB_validate():
     return accuracy_score(y_val, mnb.predict(x_val))
 
 
-# Utility function to clean text, remove duplicate words, and remove stop words.
+# Utility function to clean text, remove duplicate words, and remove stop words
 # Returns a pandas Series
 def clean_text(tweet):
     edited_text = normalize_text(tweet)
@@ -216,15 +215,18 @@ def clean_text(tweet):
     return pd.Series([" ".join(list(filter(lambda word: word not in stop_words, words_in_tweet)))])
 
 
+# Uses sklearn's MultinomialNaiveBayes to classify tweet as male or female
 # Code adapted from https://github.com/rasto2211/Twitter-User-Gender-Classification/blob/master/notebooks/exploration.ipynb
 # Used https://towardsdatascience.com/multi-class-text-classification-with-sklearn-and-nltk-in-python-a-software-engineering-use-case-779d4a28ba5
 def sklearn_MNB_predict(tweet):
     # Clean user tweet, make into pandas series for CountVectorizer transform
     edited_text = clean_text(tweet)
 
+    # Count Vectorizer vectorizes x values in training an validation data
     vectorizer = CountVectorizer()
     vectorizer = vectorizer.fit(train_data["edited_text"])
     x_train = vectorizer.transform(train_data["edited_text"])  # training data x values
+    # Encoder encodes genders into binary digits
     encoder = LabelEncoder()
     y_train = encoder.fit_transform(train_data["gender"])  # training data y values
 
@@ -237,54 +239,72 @@ def sklearn_MNB_predict(tweet):
     return prediction
 
 
+# Uses sklearn's Logistic Regression on validation data to return accuracy score on validation data
 def sklearn_logistic_validate():
+    # Count Vectorizer vectorizes x values in training an validation data
     vectorizer = CountVectorizer()
     vectorizer = vectorizer.fit(train_data["edited_text"])
     x_train = vectorizer.transform(train_data["edited_text"])  # training data x values
     x_val = vectorizer.transform(validation_data["edited_text"])
+    # Encoder encodes genders into binary digits
     encoder = LabelEncoder()
     y_train = encoder.fit_transform(train_data["gender"])  # training data y values
     y_val = encoder.transform(validation_data["gender"])
 
-    logistic = LogisticRegression(C=1.0, penalty='l1', tol=1.0e-10)
-    logistic = logistic.fit(x_train, y_train)
+    logistic = LogisticRegression(C=1.0, penalty='l1', tol=1.0e-10)  # create classifier object
+    logistic = logistic.fit(x_train, y_train)  # fit data to classifier
     return accuracy_score(y_val, logistic.predict(x_val))
 
 
+# Uses sklearn's Support Vector Classifier on validation data to return accuracy score on validation data
 def sklearn_svc_validate():
+    # Count Vectorizer vectorizes x values in training an validation data
     vectorizer = CountVectorizer()
     vectorizer = vectorizer.fit(train_data["edited_text"])
     x_train = vectorizer.transform(train_data["edited_text"])  # training data x values
     x_val = vectorizer.transform(validation_data["edited_text"])
+    # Encoder encodes genders into binary digits
     encoder = LabelEncoder()
     y_train = encoder.fit_transform(train_data["gender"])  # training data y values
     y_val = encoder.transform(validation_data["gender"])
 
-    support_vector = LinearSVC()
-    support_vector.fit(x_train, y_train)
+    support_vector = LinearSVC()  # create classifier object
+    support_vector.fit(x_train, y_train)  # fit data to classifier
     return accuracy_score(y_val, support_vector.predict(x_val))
 
 
+# Uses sklearn's Random Forest Classifier on validation data to return accuracy score on validation data
+# This is used as a baseline
 def sklearn_random_forest():
+    # Count Vectorizer vectorizes x values in training an validation data
     vectorizer = CountVectorizer()
     vectorizer = vectorizer.fit(train_data["edited_text"])
     x_train = vectorizer.transform(train_data["edited_text"])  # training data x values
     x_val = vectorizer.transform(validation_data["edited_text"])
+    # Encoder encodes genders into binary digits
     encoder = LabelEncoder()
     y_train = encoder.fit_transform(train_data["gender"])  # training data y values
     y_val = encoder.transform(validation_data["gender"])
 
-    rand_forest = RandomForestClassifier(n_estimators=200, max_depth=3, random_state=0)
-    rand_forest.fit(x_train, y_train)
+    rand_forest = RandomForestClassifier(n_estimators=200, max_depth=3, random_state=0)  # create classifier object
+    rand_forest.fit(x_train, y_train)  # fit data to classifier
     return accuracy_score(y_val, rand_forest.predict(x_val))
 
 
+# Output predictions
+sample_tweet = "I am the ultimate male. I am experienced in gorilla warfare"
+print(f"Our MNB prediction: {classify(sample_tweet)}")
+print(f"Sklearn MNB prediction: {sklearn_MNB_predict(sample_tweet)}")
 
+# Accuracy_scores holds validation scores from different models
+accuracy_scores = {
+    "Random Forest Baseline": sklearn_random_forest(),
+    "Our MNB validation score": validate(),
+    "Sklearn MNB validation score": sklearn_MNB_validate(),
+    "Logistic Regression validation score": sklearn_logistic_validate(),
+    "Support Vector Classifier validation score": sklearn_svc_validate()
+}
 
-print(sklearn_MNB_validate())
-print(validate())
-print(sklearn_MNB_predict('Features from text'))
-print(classify('Features from text'))
-print(sklearn_logistic_validate())
-print(sklearn_svc_validate())
-print(sklearn_random_forest())
+# Output accuracy scores
+for key, value in accuracy_scores.items():
+    print(f'{key}: {value}')
