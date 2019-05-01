@@ -289,24 +289,3 @@ def sklearn_random_forest():
     rand_forest = RandomForestClassifier(n_estimators=200, max_depth=3, random_state=0)  # create classifier object
     rand_forest.fit(x_train, y_train)  # fit data to classifier
     return accuracy_score(y_val, rand_forest.predict(x_val))
-
-
-# Output predictions
-# Uncomment lines to print Multinomial Naive Bayes predictions
-# sample_tweet = "I am the ultimate male. I am experienced in gorilla warfare"
-# print(f"Our MNB prediction: {classify(sample_tweet)}")
-# print(f"Sklearn MNB prediction: {sklearn_MNB_predict(sample_tweet)}")
-
-# Accuracy_scores holds validation scores from different models
-accuracy_scores = {
-    "Random Forest Baseline": sklearn_random_forest(),
-    "Our MNB validation score": validate(),
-    "Sklearn MNB validation score": sklearn_MNB_validate(),
-    "Logistic Regression validation score": sklearn_logistic_validate(),
-    "Support Vector Classifier validation score": sklearn_svc_validate()
-}
-
-# Outputs accuracy scores
-# Uncomment these lines to print accuracy scores
-# for key, value in accuracy_scores.items():
-#     print(f'{key}: {value}')

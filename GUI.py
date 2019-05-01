@@ -39,11 +39,11 @@ entry = tk.Entry(frame)
 entry.place(relwidth=0.68, relheight=1)
 
 # Button to submit tweet
-button = tk.Button(frame, text="Submit tweet", fg='#0084b4', command=lambda: button_press(entry.get()))
+button = tk.Button(frame, text="Submit Tweet", fg='#0084b4', command=lambda: button_press(entry.get()))
 button.place(relx=.5, relheight=1, relwidth=.12)
 
 # Button to show sklearn's prediction.
-button1 = tk.Button(frame, text="Show sklearn prediction", command=lambda: button1_press(entry.get()))
+button1 = tk.Button(frame, text="Show Sklearn Prediction", command=lambda: button1_press(entry.get()))
 button1.place(relx=.63, relheight=1, relwidth=.2)
 
 # Button to show our implementation's accuracy.
