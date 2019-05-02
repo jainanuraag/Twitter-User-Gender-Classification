@@ -8,7 +8,6 @@ from sklearn.metrics import accuracy_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import LinearSVC
 from sklearn.ensemble import RandomForestClassifier
-from collections import Counter
 
 # Data guidelines according to Canvas
 train_data_size = .6
@@ -216,8 +215,6 @@ def clean_text(tweet):
 
 
 # Uses sklearn's MultinomialNaiveBayes to classify tweet as male or female
-# Code adapted from https://github.com/rasto2211/Twitter-User-Gender-Classification/blob/master/notebooks/exploration.ipynb
-# Used https://towardsdatascience.com/multi-class-text-classification-with-sklearn-and-nltk-in-python-a-software-engineering-use-case-779d4a28ba5
 def sklearn_MNB_predict(tweet):
     # Clean user tweet, make into pandas series for CountVectorizer transform
     edited_text = clean_text(tweet)

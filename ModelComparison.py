@@ -1,5 +1,6 @@
 import Classifiers as cl
 
+
 # Accuracy_scores holds validation scores from different models
 accuracy_scores = {
     "Random Forest Baseline": cl.sklearn_random_forest(),
