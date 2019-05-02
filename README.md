@@ -11,6 +11,8 @@ The linguistic composition of tweets was used to train and use machine learning 
   5. The 'Submit Tweet' button shows gender classification based on this project's implementation of the Naive Bayes classifier
   6. The 'Show Sklearn Prediction' button shows gender classification using a 3rd party model
   7. The 'Validation Data Accuracy' button shows the accuracy of this project's implementation of the Naive Bayes classifier on validation data
+
+
   
 To view a comparison of models, the below steps must be followed:
   1. Open a command line tool on the user's computer and navigate to the cloned/downloaded repository
